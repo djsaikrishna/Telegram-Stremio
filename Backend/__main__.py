@@ -8,6 +8,7 @@ from Backend.helper.pinger import ping
 from Backend.logger import LOGGER
 from Backend.config import Telegram
 from Backend.fastapi import server
+from Backend.helper.settings_manager import SettingsManager
 from Backend.helper.pyro import restart_notification, setup_bot_commands
 from Backend.pyrofork.bot import Helper, StreamBot
 from Backend.pyrofork.clients import initialize_clients
@@ -31,6 +32,9 @@ async def start_services():
         
         await db.connect()
         await asleep(1.2)
+
+        await SettingsManager.initialize(db)
+        await asleep(0.5)
         
         await StreamBot.start()
         StreamBot.username = StreamBot.me.username
