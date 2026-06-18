@@ -78,6 +78,34 @@ class Database:
             upsert=True
         )
 
+
+    async def get_settings(self) -> dict:
+        """Return the full runtime settings document, or {} if none exists yet."""
+        try:
+            doc = await self.dbs["tracking"]["settings"].find_one({"_id": "app_settings"})
+            return doc or {}
+        except Exception as e:
+            LOGGER.error(f"Database.get_settings error: {e}")
+            return {}
+
+    async def save_settings(self, settings: dict) -> bool:
+        """
+        Persist *settings* to the tracking database.
+        Uses upsert so the first call creates the document automatically.
+        """
+        try:
+            clean = {k: v for k, v in settings.items() if k != "_id"}
+            await self.dbs["tracking"]["settings"].update_one(
+                {"_id": "app_settings"},
+                {"$set": clean},
+                upsert=True,
+            )
+            return True
+        except Exception as e:
+            LOGGER.error(f"Database.save_settings error: {e}")
+            return False
+
+
     # -------------------------------
     # User Subscription Management
     # -------------------------------
