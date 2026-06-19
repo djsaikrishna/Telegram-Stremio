@@ -35,7 +35,13 @@ async def start_services():
 
         await SettingsManager.initialize(db)
         await asleep(0.5)
-        
+
+        try:
+            await db.reload_extra_databases(SettingsManager.current().extra_databases)
+        except Exception as e:
+            LOGGER.error(f"Failed to reconnect extra storage databases on startup: {e}")
+        await asleep(0.5)
+
         await StreamBot.start()
         StreamBot.username = StreamBot.me.username
         LOGGER.info(f"Bot Client : [@{StreamBot.username}]")
