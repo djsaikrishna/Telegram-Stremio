@@ -11,7 +11,6 @@ from Backend.helper.settings_manager import SettingsManager
 from Backend.helper.pyro import restart_notification, setup_bot_commands
 from Backend.pyrofork.bot import Helper, StreamBot
 from Backend.pyrofork.clients import initialize_clients
-from Backend.pyrofork.plugins.channels import _load_channels_from_db
 from Backend.helper.subscription_checker import subscription_checker_loop
 from Backend.helper.link_checker import DeadLinkChecker
 from Backend.fastapi.main import app
@@ -53,9 +52,6 @@ async def start_services():
 
         LOGGER.info("Initializing Multi Clients...")
         await initialize_clients()
-        await asleep(2)
-
-        await _load_channels_from_db()
         await asleep(2)
         
         await setup_bot_commands(StreamBot)
