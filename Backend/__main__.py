@@ -6,7 +6,6 @@ from pyrogram import idle
 from Backend import __version__, db
 from Backend.helper.pinger import ping
 from Backend.logger import LOGGER
-from Backend.config import Telegram
 from Backend.fastapi import server
 from Backend.helper.settings_manager import SettingsManager
 from Backend.helper.pyro import restart_notification, setup_bot_commands
@@ -78,8 +77,10 @@ async def start_services():
             ))
 
         loop.create_task(start_auto_catalog_interval_loop(db))
-        
-        if Telegram.SUBSCRIPTION:
+
+
+        config = SettingsManager.current()
+        if config.subscription:
             loop.create_task(subscription_checker_loop(StreamBot))
             LOGGER.info("Subscription Checker Task Started.")
         
